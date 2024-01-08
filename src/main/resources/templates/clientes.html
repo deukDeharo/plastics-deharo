@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Clientes</title>
+    <link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap.min.css}">
+</head>
+<body>
+    <div th:insert="fragments :: navbar"></div>
+<div class="container">
+    <h1>Clientes</h1>
+    <form th:action="@{/clientes}" method="get">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Nombre" name="nombre" th:value="${nombre}">
+            <input type="text" class="form-control" placeholder="Localidad" name="localidad" th:value="${localidad}">
+            <button class="btn btn-primary" type="submit">Filtrar</button>
+        </div>
+    </form>
+    <a href="/cliente" class="btn btn-success mb-3">Añadir</a>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Codigo</th>
+            <th scope="col">NIF</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Localidad</th>
+            <th scope="col">Domicilio</th>
+            <th scope="col">Forma de Pago</th>
+            <th scope="col">Número de Cuenta</th>
+            <th scope="col">Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="cliente : ${clientes}">
+            <td th:text="${cliente.codigoCliente}"></td>
+            <td th:text="${cliente.nif}"></td>
+            <td><a th:href="@{/cliente/{codigoCliente}(codigoCliente=${cliente.codigoCliente})}" th:text="${cliente.nombre}"></a></td>
+            <td th:text="${cliente.localidad}"></td>
+            <td th:text="${cliente.domicilio}"></td>
+            <td th:text="${cliente.formaDePago}"></td>
+            <td th:text="${cliente.numeroDeCuenta}"></td>
+            <td>
+                <a th:href="@{/cliente/{codigoCliente}(codigoCliente=${cliente.codigoCliente})}" class="btn btn-primary">Editar</a>
+                <button class="btn btn-danger" th:data-codigo-cliente="${cliente.codigoCliente}" onclick="confirmDelete(this.getAttribute('data-codigo-cliente'))">Eliminar</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+<script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+<script>
+    function confirmDelete(codigoCliente) {
+        if (confirm('¿Estás seguro de que deseas eliminar?')) {
+            fetch('/cliente/' + codigoCliente, {
+                method: 'DELETE',
+            }).then(response => 
+                response.ok ? location.reload() : alert('Error al eliminar')
+            );
+        }
+    }
+    </script>
+</html>

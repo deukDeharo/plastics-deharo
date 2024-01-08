@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Artículos</title>
+    <link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap.min.css}">
+</head>
+<body>
+    <div th:insert="fragments :: navbar"></div>
+<div class="container">
+    <h1>Artículos</h1>
+    <form th:action="@{/articulos}" method="get">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Concepto" name="concepto" th:value="${concepto}">
+            <button class="btn btn-primary" type="submit">Filtrar</button>
+        </div>
+    </form>
+    <a href="/articulo" class="btn btn-success mb-3">Añadir</a>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Código</th>
+            <th scope="col">Concepto</th>
+            <th scope="col">Precio</th>
+            <th scope="col">Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="articulo : ${articulos}">
+            <td th:text="${articulo.codigo}"></td>
+            <td><a th:href="@{/articulo/{codigo}(codigo=${articulo.codigo})}" th:text="${articulo.concepto}"></a></td>
+            <td th:text="${articulo.precio}"></td>
+            <td>
+                <a th:href="@{/articulo/{codigo}(codigo=${articulo.codigo})}" class="btn btn-primary">Editar</a>
+                <button class="btn btn-danger" th:data-codigo="${articulo.codigo}" onclick="confirmDelete(this.getAttribute('data-codigo'))">Eliminar</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+<script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+<script>
+    function confirmDelete(codigo) {
+        if (confirm('¿Estás seguro de que deseas eliminar?')) {
+            fetch('/articulo/' + codigo, {
+                method: 'DELETE',
+            }).then(response => 
+                response.ok ? location.reload() : alert('Error al eliminar')
+            );
+        }
+    }
+    </script>
+</html>

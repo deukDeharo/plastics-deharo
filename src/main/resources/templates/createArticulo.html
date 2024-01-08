@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Crear artículo</title>
+    <link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap.min.css}">
+</head>
+<body>
+    <div th:insert="fragments :: navbar"></div>
+    <div class="container">
+        <h1>Crear artículo</h1>
+        <form th:action="@{/articulo}" th:object="${articulo}" method="post">
+            <div class="form-group">
+                <label for="concepto">Concepto</label>
+                <input type="text" class="form-control" id="concepto" th:field="*{concepto}">
+            </div>
+            <div class="form-group">
+                <label for="precio">Precio</label>
+                <input type="number" step="0.01" class="form-control" id="precio" th:field="*{precio}">
+            </div>
+            <br>
+            <button type="submit" class="btn btn-primary">Crear</button>
+        </form>
+    </div>
+    <script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+</body>
+</html>

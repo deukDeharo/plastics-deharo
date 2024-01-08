@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Proveedores</title>
+    <link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap.min.css}">
+</head>
+<body>
+    <div th:insert="fragments :: navbar"></div>
+<div class="container">
+    <h1>Proveedores</h1>
+    <form th:action="@{/proveedores}" method="get">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Nombre" name="nombre" th:value="${nombre}">
+            <button class="btn btn-primary" type="submit">Filtrar</button>
+        </div>
+    </form>
+    <a href="/proveedor" class="btn btn-success mb-3">Añadir</a>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">NIF</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="proveedor : ${proveedores}">
+            <td th:text="${proveedor.id}"></td>
+            <td th:text="${proveedor.nif}"></td>
+            <td><a th:href="@{/proveedor/{id}(id=${proveedor.id})}" th:text="${proveedor.nombre}"></a></td>
+            <td>
+                <a th:href="@{/proveedor/{id}(id=${proveedor.id})}" class="btn btn-primary">Editar</a>
+                <button class="btn btn-danger" th:data-id="${proveedor.id}" onclick="confirmDelete(this.getAttribute('data-id'))">Eliminar</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+<script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+<script>
+    function confirmDelete(id) {
+        if (confirm('¿Estás seguro de que deseas eliminar?')) {
+            fetch('/proveedor/' + id, {
+                method: 'DELETE',
+            }).then(response => 
+                response.ok ? location.reload() : alert('Error al eliminar')
+            );
+        }
+    }
+    </script>
+</html>

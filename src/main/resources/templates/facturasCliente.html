@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Clientes</title>
+    <link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap.min.css}">
+</head>
+<body>
+    <div th:insert="fragments :: navbar"></div>
+<div class="container">
+    <h1>Clientes</h1>
+    <form th:action="@{/facturasCliente}" method="get">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Codigo factura" name="codigo" th:value="${codigoFactura}">
+            <input type="text" class="form-control" placeholder="Cliente" name="cliente" th:value="${clienteId}">
+            <button class="btn btn-primary" type="submit">Filtrar</button>
+        </div>
+    </form>
+    <a href="/facturaCliente" class="btn btn-success mb-3">Crear Factura</a>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">N.Factura</th>
+            <th scope="col">C.Cliente</th>
+            <th scope="col">N.Cliente</th>
+            <th scope="col">Fecha</th>
+            <th scope="col">Total</th>
+            <th scope="col">Generarda</th>
+            <th scope="col">Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        
+        </tbody>
+    </table>
+</div>
+</body>
+<script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+<script>
+   /* function confirmDelete(codigo) {
+        if (confirm('¿Estás seguro de que deseas eliminar?')) {
+            fetch('/facturaCliente/' + codigo, {
+                method: 'DELETE',
+            }).then(response => 
+                response.ok ? location.reload() : alert('Error al eliminar')
+            );
+        }
+    }*/
+    </script>
+</html>
