@@ -11,21 +11,27 @@
         <br> 
         <form>
             <h2>Cabecera</h2>
-            <div class="form-group">
-                <label for="fecha">Fecha</label>
-                <input type="date" class="form-control" id="fecha">
-            </div>
-            <div class="form-group">
-                <label for="codigoCliente">Codigo Cliente</label>
-                <input type="text" class="form-control" id="codigoCliente">
-            </div>
-            <div class="form-group">
-                <label for="iva">IVA</label>
-                <input type="text" class="form-control" id="iva" value="21">
-            </div>
-            <div class="form-group">
-                <label for="fechaVencimiento">Fecha de Vencimiento</label>
-                <input type="date" class="form-control" id="fechaVencimiento">
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label for="fecha">Fecha</label>
+                        <input type="date" class="form-control" id="fecha">
+                    </div>
+                    <div class="form-group">
+                        <label for="codigoCliente">Codigo Cliente</label>
+                        <input type="text" class="form-control" id="codigoCliente">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label for="iva">IVA</label>
+                        <input type="text" class="form-control" id="iva" value="21">
+                    </div>
+                    <div class="form-group">
+                        <label for="fechaVencimiento">Fecha de Vencimiento</label>
+                        <input type="date" class="form-control" id="fechaVencimiento">
+                    </div>
+                </div>
             </div>
             <br>
             <h2>Detalle</h2>
@@ -45,7 +51,7 @@
             </table>
             <button type="button" class="btn btn-primary" id="addRow">Añadir fila</button>
             <br><br>
-            <button type="submit" class="btn btn-primary">Enviar</button>
+            <button type="button" class="btn btn-primary" id="submitBtn">Enviar</button>
         </form>
     </div>
     <script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
@@ -58,6 +64,44 @@
             cell1.innerHTML = '<input type="text" class="form-control">';
             cell2.innerHTML = '<input type="text" class="form-control">';
         });
+
+        document.getElementById('fecha').valueAsDate = new Date();
+
+        document.getElementById('submitBtn').addEventListener('click', function() {
+            var headerData = {
+                fecha: document.getElementById('fecha').value,
+                codigoCliente: document.getElementById('codigoCliente').value,
+                iva: document.getElementById('iva').value,
+                fechaVencimiento: document.getElementById('fechaVencimiento').value
+            };
+
+            var detalleData = Array.from(document.getElementById('detalleFactura').querySelectorAll('tbody tr')).map(function(row) {
+                var cells = row.querySelectorAll('input');
+                return {
+                    codigoArticulo: cells[0].value,
+                    unidades: cells[1].value
+                };
+            });
+
+            var data = {
+                header: headerData,
+                detalle: detalleData
+            };
+            console.log(data);
+
+            fetch('/facturaCliente', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            }).then(function(response) {
+                return response.json();
+            }).then(function(data) {
+                console.log(data);
+            });
+        });
+        
     </script>
 </body>
 </html>

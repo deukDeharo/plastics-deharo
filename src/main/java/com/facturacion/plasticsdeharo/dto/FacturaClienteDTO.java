@@ -1,24 +1,18 @@
-package com.facturacion.plasticsdeharo.entity;
+package com.facturacion.plasticsdeharo.dto;
 
 import java.time.LocalDate;
+import java.util.List;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import com.facturacion.plasticsdeharo.entity.FacturaClientesDetalle;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-public class FacturaClientesHeader {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+public class FacturaClienteDTO {
     private Long codigoFactura;
     private LocalDate date;
     private Long codigoCliente;
@@ -35,4 +29,6 @@ public class FacturaClientesHeader {
     private String banco;
     private String cuentaCte;
     private Boolean isGenerated; 
+
+    private List<FacturaClientesDetalle> detalle;
 }

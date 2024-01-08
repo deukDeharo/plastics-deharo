@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import com.facturacion.plasticsdeharo.dto.FacturaDTO;
 import com.facturacion.plasticsdeharo.entity.Articulo;
 import com.facturacion.plasticsdeharo.service.ArticuloService;
 
@@ -26,17 +28,23 @@ public class FacturasClientesController {
         return "facturasCliente";
     }
 
-    @GetMapping("/facturaCliente")
-    public String getArticulo(Model model) {
+    @GetMapping("/facturaCliente/{id}")
+    public String getFactura(Model model) {
         // model.addAttribute("articulo", new Articulo());
-        return "CreateFacturaCliente";
+        return "editFacturaCliente";
     }
 
-    // @PostMapping("/articulo")
-    // public String postArticulo(@ModelAttribute Articulo articulo) {
-    //     articuloService.createArticulo(articulo);
-    //     return "redirect:/articulos";
-    // }
+    @GetMapping("/facturaCliente")
+    public String getCreateFactura(Model model) {
+        // model.addAttribute("articulo", new Articulo());
+        return "createFacturaCliente";
+    }
+
+    @PostMapping("/facturaCliente")
+    public String crearFactura(@RequestBody FacturaDTO factura) {
+        
+        return "facturasCliente";
+    }
 
     // @GetMapping("/articulo/{codigo}")
     // public String getArticulo(@PathVariable Long codigo, Model model) {
