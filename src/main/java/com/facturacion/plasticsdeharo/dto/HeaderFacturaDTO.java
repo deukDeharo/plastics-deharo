@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class HeaderFacturaDTO {
     private String fecha;
-    private String codigoCliente;
-    private String iva;
+    private Long codigoCliente;
+    private Integer iva;
     private String fechaVencimiento;
 
 }

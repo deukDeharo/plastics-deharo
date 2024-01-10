@@ -1,30 +1,27 @@
 package com.facturacion.plasticsdeharo.controller;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.facturacion.plasticsdeharo.dto.FacturaDTO;
-import com.facturacion.plasticsdeharo.entity.Articulo;
-import com.facturacion.plasticsdeharo.service.ArticuloService;
-
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
+import com.facturacion.plasticsdeharo.entity.FacturaClientesHeader;
+import com.facturacion.plasticsdeharo.service.FacturaClientesService;
+import java.util.List;
 @Controller
 public class FacturasClientesController {
 
-    // @Autowired
-    // ArticuloService articuloService;
+    @Autowired
+    FacturaClientesService fClientesService;
     
     @GetMapping("/facturasCliente")
     public String getArticulos(Model model) {
-        //model.addAttribute("articulos", articuloService.getAllArticulos());
+        List<FacturaClientesHeader> facturas = fClientesService.getAllFacturas();
+        model.addAttribute("facturas", facturas);
         return "facturasCliente";
     }
 

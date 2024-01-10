@@ -4,7 +4,9 @@ package com.facturacion.plasticsdeharo.service;
 
 import org.springframework.stereotype.Service;
 
+import com.facturacion.plasticsdeharo.dto.DetalleFacturaDTO;
 import com.facturacion.plasticsdeharo.entity.FacturaClientesDetalle;
+import com.facturacion.plasticsdeharo.entity.FacturaClientesHeader;
 import com.facturacion.plasticsdeharo.repository.FacturaClientesDetalleRepository;
 import lombok.AllArgsConstructor;
 
@@ -40,5 +42,11 @@ public class FacturaClientesDetalleService {
     public void deleteFacturaClientesDetalle(Long id) {
         fDetalleRepository.deleteById(id);
     }
+
+    public List<FacturaClientesDetalle> serializeDetalles(List<DetalleFacturaDTO> detalles){
+        return null;
+    }
+
+    
 
 }

@@ -30,9 +30,9 @@ public class FacturaClientesHeader {
     private String numeroDeCuentaCliente;
     private Long total;
     private Long totalConIva;
-    private String formaPago;
     private LocalDate dateVencimiento;
     private String banco;
-    private String cuentaCte;
-    private Boolean isGenerated; 
+    private Boolean isGenerated;
+    private Integer iva;
+
 }

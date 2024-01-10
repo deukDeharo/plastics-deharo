@@ -1,7 +1,10 @@
 package com.facturacion.plasticsdeharo.service;
 
 import org.springframework.stereotype.Service;
-
+import java.time.format.DateTimeFormatter;
+import java.time.LocalDate;
+import com.facturacion.plasticsdeharo.dto.HeaderFacturaDTO;
+import com.facturacion.plasticsdeharo.entity.Cliente;
 import com.facturacion.plasticsdeharo.entity.FacturaClientesHeader;
 import com.facturacion.plasticsdeharo.repository.FacturaClientesHeaderRepository;
 import lombok.AllArgsConstructor;
@@ -15,6 +18,7 @@ import javax.persistence.EntityNotFoundException;
 public class FacturaClientesHeaderService {
 
     private final FacturaClientesHeaderRepository fHeaderRepository;
+    private final ClienteService clienteService;
 
     public List<FacturaClientesHeader> getAllFacturaClientesHeader() {
         return fHeaderRepository.findAll();
@@ -38,5 +42,25 @@ public class FacturaClientesHeaderService {
     public void deleteFacturaClientesHeader(Long id) {
         fHeaderRepository.deleteById(id);
     }
+
+    public  FacturaClientesHeader serializeHeader(HeaderFacturaDTO dto){
+        FacturaClientesHeader header = new FacturaClientesHeader();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        header.setDate(LocalDate.parse(dto.getFecha(),formatter));
+        header.setDateVencimiento(LocalDate.parse(dto.getFechaVencimiento(),formatter));
+        header.setIsGenerated(false);
+        header.setIva(dto.getIva());
+        Cliente cliente = clienteService.getClienteById(dto.getCodigoCliente());
+        header.setCodigoCliente(dto.getCodigoCliente());
+        header.setNumeroDeCuentaCliente(cliente.getNumeroDeCuenta());
+        header.setBanco("");
+        header.setDomicilioCliente(cliente.getDomicilio());
+        header.setFormaDePagoCliente(cliente.getFormaDePago());
+        header.setNifCliente(cliente.getNif());
+        header.setNombreCliente(cliente.getNombre());
+        header.setLocalidadCliente(cliente.getLocalidad());
+        return header;
+    }
+
 
 }
