@@ -62,5 +62,17 @@ public class FacturaClientesHeaderService {
         return header;
     }
 
+    public List<FacturaClientesHeader> getByCodigoFacturaAndCodigoCliente(Long codigoFactura, Long codigoCliente) {
+        return fHeaderRepository.findByCodigoFacturaAndCodigoCliente(codigoFactura,codigoCliente);
+    }
+
+    public List<FacturaClientesHeader> getByCodigoFactura(Long codigoFactura) {
+        return fHeaderRepository.findByCodigoFactura(codigoFactura);
+    }
+
+    public List<FacturaClientesHeader> getByCodigoCliente(Long codigoCliente) {
+        return fHeaderRepository.findByCodigoCliente(codigoCliente);
+    }
+
 
 }

@@ -5,11 +5,14 @@ package com.facturacion.plasticsdeharo.service;
 import org.springframework.stereotype.Service;
 
 import com.facturacion.plasticsdeharo.dto.DetalleFacturaDTO;
+import com.facturacion.plasticsdeharo.entity.Articulo;
+import com.facturacion.plasticsdeharo.entity.Cliente;
 import com.facturacion.plasticsdeharo.entity.FacturaClientesDetalle;
 import com.facturacion.plasticsdeharo.entity.FacturaClientesHeader;
 import com.facturacion.plasticsdeharo.repository.FacturaClientesDetalleRepository;
 import lombok.AllArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
@@ -19,6 +22,8 @@ import javax.persistence.EntityNotFoundException;
 public class FacturaClientesDetalleService {
 
     private final FacturaClientesDetalleRepository fDetalleRepository;
+
+    private final ArticuloService articuloService;
 
     public List<FacturaClientesDetalle> getAllFacturaClientesDetalle() {
         return fDetalleRepository.findAll();
@@ -44,7 +49,24 @@ public class FacturaClientesDetalleService {
     }
 
     public List<FacturaClientesDetalle> serializeDetalles(List<DetalleFacturaDTO> detalles){
-        return null;
+        List<FacturaClientesDetalle> detallesFactura = new ArrayList<FacturaClientesDetalle>();
+        for (DetalleFacturaDTO dto : detalles) {
+            FacturaClientesDetalle detalle = new FacturaClientesDetalle(dto);
+            Articulo articulo = articuloService.getArticuloById(detalle.getCodigoArticulo());
+            detalle.setConceptoArticulo(articulo.getConcepto());
+            detalle.setPrecio(articulo.getPrecio());
+            detalle.setImporte(detalle.getPrecio()*detalle.getUnidad());
+            detallesFactura.add(detalle);
+        }
+        return detallesFactura;
+    }
+
+    public List<FacturaClientesDetalle> getFacturaClientesDetalleByHeaderId(Long id) {
+       return fDetalleRepository.findByCodigoFacturaHeader(id);
+    }
+
+    public void deleteFacturaClientesDetallesByCodigoFactura(Long id) {
+        fDetalleRepository.deleteByCodigoFacturaHeader(id);
     }
 
     

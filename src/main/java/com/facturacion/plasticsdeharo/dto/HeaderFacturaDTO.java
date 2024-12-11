@@ -12,5 +12,6 @@ public class HeaderFacturaDTO {
     private Long codigoCliente;
     private Integer iva;
     private String fechaVencimiento;
+    private Long idFactura;
 
 }
