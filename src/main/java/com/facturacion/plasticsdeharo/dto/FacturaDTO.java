@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class FacturaDTO {
     private HeaderFacturaDTO header;
     private List<DetalleFacturaDTO> detalle;
+    private Boolean isGenerated;
 }

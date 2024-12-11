@@ -2,36 +2,39 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <title>Crear Factura</title>
+    <title>Editar Factura</title>
     <link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap.min.css}">
 </head>
 
 <body class="dark-mode">
     <div th:insert="fragments :: navbar"></div>
     <div class="container">
-        <h1>Crear Factura</h1>
+        <h1>Editar Factura</h1>
         <br>
         <form>
+            <!-- Campo oculto para IdFactura -->
+            <input type="hidden" id="idFactura" th:value="${factura.header.idFactura}">
+            
             <h2>Cabecera</h2>
             <div class="row">
                 <div class="col">
                     <div class="form-group">
                         <label for="fecha">Fecha</label>
-                        <input type="date" class="form-control" id="fecha">
+                        <input type="date" class="form-control" id="fecha" th:value="${factura.header.fecha}">
                     </div>
                     <div class="form-group">
-                        <label for="codigoCliente">Codigo Cliente</label>
-                        <input type="text" class="form-control" id="codigoCliente">
+                        <label for="codigoCliente">Código Cliente</label>
+                        <input type="text" class="form-control" id="codigoCliente" th:value="${factura.header.codigoCliente}">
                     </div>
                 </div>
                 <div class="col">
                     <div class="form-group">
                         <label for="iva">IVA</label>
-                        <input type="text" class="form-control" id="iva" value="21">
+                        <input type="text" class="form-control" id="iva" th:value="${factura.header.iva}">
                     </div>
                     <div class="form-group">
                         <label for="fechaVencimiento">Fecha de Vencimiento</label>
-                        <input type="date" class="form-control" id="fechaVencimiento">
+                        <input type="date" class="form-control" id="fechaVencimiento" th:value="${factura.header.fechaVencimiento}">
                     </div>
                 </div>
             </div>
@@ -40,15 +43,15 @@
             <table class="table" id="detalleFactura">
                 <thead>
                     <tr>
-                        <th>Codigo Articulo</th>
+                        <th>Código Artículo</th>
                         <th>Unidades</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td><input type="text" class="form-control" id="codigoArticulo"></td>
-                        <td><input type="text" class="form-control" id="unidades"></td>
+                    <tr th:each="detalle : ${factura.detalle}">
+                        <td><input type="text" class="form-control" th:value="${detalle.codigoArticulo}"></td>
+                        <td><input type="text" class="form-control" th:value="${detalle.unidades}"></td>
                         <td>
                             <button type="button" class="btn btn-danger removeRow">Eliminar</button>
                         </td>
@@ -57,7 +60,13 @@
             </table>
             <button type="button" class="btn btn-primary" id="addRow">Añadir fila</button>
             <br><br>
-            <button type="button" class="btn btn-primary" id="submitBtn">Enviar</button>
+            <!-- Botón de guardar -->
+            <button type="button" 
+                    class="btn btn-primary" 
+                    id="submitBtn" 
+                    th:disabled="${factura.isGenerated}" 
+                    th:text="${factura.isGenerated} ? 'Factura generada (no editable)' : 'Guardar Cambios'">
+            </button>
         </form>
     </div>
     <script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
@@ -73,7 +82,7 @@
             cell2.innerHTML = '<input type="text" class="form-control">';
             cell3.innerHTML = '<button type="button" class="btn btn-danger removeRow">Eliminar</button>';
 
-            addRemoveRowListeners(); // Asegurar que la nueva fila tenga el listener
+            addRemoveRowListeners(); // Asegurarse de agregar el listener para la nueva fila
         });
 
         function addRemoveRowListeners() {
@@ -87,10 +96,13 @@
         // Inicializar listeners para las filas ya existentes
         addRemoveRowListeners();
 
-        document.getElementById('fecha').valueAsDate = new Date();
-
         document.getElementById('submitBtn').addEventListener('click', function () {
+            if (document.getElementById('submitBtn').disabled) {
+                return; // No hacer nada si el botón está deshabilitado
+            }
+
             var headerData = {
+                idFactura: document.getElementById('idFactura').value, // Leer ID del campo oculto
                 fecha: document.getElementById('fecha').value,
                 codigoCliente: document.getElementById('codigoCliente').value,
                 iva: document.getElementById('iva').value,
@@ -111,8 +123,8 @@
             };
             console.log(data);
 
-            fetch('/facturaCliente', {
-                method: 'POST',
+            fetch('/facturaCliente/' + headerData.idFactura, { // Endpoint para actualizar la factura
+                method: 'PUT', // Cambiar a PUT
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -121,10 +133,10 @@
                 if (response.ok) {
                     return response.text(); // Procesar respuesta como texto
                 } else {
-                    throw new Error('Error en la creación de la factura');
+                    throw new Error('Error al actualizar la factura');
                 }
             }).then(function (redirectUrl) {
-                window.location.href = redirectUrl; // Usar la URL devuelta para redirigir
+                window.location.href = redirectUrl; // Redirige a la URL devuelta
             }).catch(function (error) {
                 console.error('Error:', error);
             });
