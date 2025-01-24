@@ -1,7 +1,9 @@
 package com.facturacion.plasticsdeharo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.facturacion.plasticsdeharo.dto.FacturaDTO;
 import com.facturacion.plasticsdeharo.entity.FacturaClientesHeader;
 import com.facturacion.plasticsdeharo.service.FacturaClientesService;
+
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 @Controller
@@ -73,6 +77,26 @@ public class FacturasClientesController {
             return "facturasCliente";
         } else {
             return "Factura cliente no encontrada.";
+        }
+    }
+
+    @GetMapping("/facturaCliente/{id}/print")
+    public ResponseEntity<byte[]> printFacturaXls(@PathVariable Long id) {
+        try {
+            // Generar el archivo Excel como flujo de bytes
+            ByteArrayOutputStream excelOutputStream = fClientesService.printFacturaXls(id);
+
+            // Preparar los encabezados de la respuesta HTTP
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.setContentDispositionFormData("attachment", "template_copia.xlsx");
+
+            // Devolver el archivo como un arreglo de bytes
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(excelOutputStream.toByteArray());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(null);
         }
     }
 

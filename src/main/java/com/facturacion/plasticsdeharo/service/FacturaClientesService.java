@@ -1,10 +1,19 @@
 package com.facturacion.plasticsdeharo.service;
 
 import java.util.List;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import javax.transaction.Transactional;
 
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
 import com.facturacion.plasticsdeharo.dto.DetalleFacturaDTO;
@@ -13,7 +22,7 @@ import com.facturacion.plasticsdeharo.dto.HeaderFacturaDTO;
 import com.facturacion.plasticsdeharo.entity.FacturaClientesDetalle;
 import com.facturacion.plasticsdeharo.entity.FacturaClientesHeader;
 import com.facturacion.plasticsdeharo.exceptions.FacturaCreationException;
-
+import com.facturacion.plasticsdeharo.xls.FacturasClienteXLS;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +34,7 @@ public class FacturaClientesService {
 
     private final FacturaClientesDetalleService fDetalleService;
     private final FacturaClientesHeaderService fHeaderService;
+    private final FacturasClienteXLS xlsBuilder;
 
     public List<FacturaClientesHeader> filterFacturas(Long codigoFactura, Long codigoCliente) {
         if (codigoFactura != null && codigoCliente != null) {
@@ -134,5 +144,30 @@ public class FacturaClientesService {
             return false;
         }
     }
+
+    public ByteArrayOutputStream printFacturaXls(Long id) throws Exception {
+        // Usar ClassLoader para cargar el archivo desde el classpath
+        ClassLoader classLoader = getClass().getClassLoader();
+        InputStream inputStream = classLoader.getResourceAsStream("static/template.xlsx");
+
+        if (inputStream == null) {
+            throw new RuntimeException("No se pudo encontrar el archivo template.xlsx en static.");
+        }
+
+        // Crear un flujo de salida en memoria
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        try (Workbook workbook = new XSSFWorkbook(inputStream)) {
+            // Llenar las celdas en las hojas
+            xlsBuilder.llenarHojaFactura(workbook);
+            xlsBuilder.llenarHojaAlbaran(workbook);
+
+            // Escribir el contenido del archivo Excel en el flujo de salida
+            workbook.write(outputStream);
+        }
+
+        return outputStream;
+    }
+
 
 }
