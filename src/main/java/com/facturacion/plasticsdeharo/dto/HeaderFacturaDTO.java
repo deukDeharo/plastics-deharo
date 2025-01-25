@@ -1,5 +1,7 @@
 package com.facturacion.plasticsdeharo.dto;
 
+import java.math.BigDecimal;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,5 +15,8 @@ public class HeaderFacturaDTO {
     private Integer iva;
     private String fechaVencimiento;
     private Long idFactura;
+    private BigDecimal  total;
+    private BigDecimal  totalConIva;
+    private BigDecimal  importeIva;
 
 }

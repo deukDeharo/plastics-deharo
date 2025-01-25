@@ -1,19 +1,24 @@
 package com.facturacion.plasticsdeharo.service;
 
 import java.util.List;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import javax.transaction.Transactional;
 
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
 import com.facturacion.plasticsdeharo.dto.DetalleFacturaDTO;
 import com.facturacion.plasticsdeharo.dto.FacturaDTO;
 import com.facturacion.plasticsdeharo.dto.HeaderFacturaDTO;
+import com.facturacion.plasticsdeharo.entity.Cliente;
 import com.facturacion.plasticsdeharo.entity.FacturaClientesDetalle;
 import com.facturacion.plasticsdeharo.entity.FacturaClientesHeader;
 import com.facturacion.plasticsdeharo.exceptions.FacturaCreationException;
-
+import com.facturacion.plasticsdeharo.xls.FacturasClienteXLS;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +30,7 @@ public class FacturaClientesService {
 
     private final FacturaClientesDetalleService fDetalleService;
     private final FacturaClientesHeaderService fHeaderService;
+    private final FacturasClienteXLS xlsBuilder;
 
     public List<FacturaClientesHeader> filterFacturas(Long codigoFactura, Long codigoCliente) {
         if (codigoFactura != null && codigoCliente != null) {
@@ -78,6 +84,11 @@ public class FacturaClientesService {
             DetalleFacturaDTO dto = new DetalleFacturaDTO();
             dto.setUnidades(facturaClientesDetalle.getUnidad().toString());
             dto.setCodigoArticulo(facturaClientesDetalle.getCodigoArticulo().toString());
+            dto.setCreatedAt(facturaClientesDetalle.getCreatedAt());
+            dto.setImporte(facturaClientesDetalle.getImporte());
+            dto.setPrecio(facturaClientesDetalle.getPrecio());
+            dto.setUnidad(facturaClientesDetalle.getUnidad());
+            dto.setConceptoArticulo(facturaClientesDetalle.getConceptoArticulo());
             detalles.add(dto);
         }
         return detalles;
@@ -90,6 +101,9 @@ public class FacturaClientesService {
         dto.setFechaVencimiento(entity.getDateVencimiento().toString());
         dto.setIdFactura(entity.getCodigoFactura());
         dto.setIva(entity.getIva());
+        dto.setTotal(entity.getTotal());
+        dto.setTotalConIva(entity.getTotalConIva());
+        dto.setImporteIva(entity.getImporteIva());
         return dto;
     }
 
@@ -133,6 +147,39 @@ public class FacturaClientesService {
             log.info("error de actualizacion debido a " + e.getMessage());
             return false;
         }
+    }
+
+    public ByteArrayOutputStream printFacturaXls(Long id,boolean hasFactura) throws Exception {
+        // Usar ClassLoader para cargar el archivo desde el classpath
+        ClassLoader classLoader = getClass().getClassLoader();
+        InputStream inputStream = classLoader.getResourceAsStream("static/template.xlsx");
+
+        if (inputStream == null) {
+            throw new RuntimeException("No se pudo encontrar el archivo template.xlsx en static.");
+        }
+
+        // Crear un flujo de salida en memoria
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        try (Workbook workbook = new XSSFWorkbook(inputStream)) {
+            FacturaDTO facturaDTO = getFacturaById(id);
+            Cliente cliente = fHeaderService.getClienteById(facturaDTO.getHeader().getCodigoCliente());
+            
+            // Llenar las celdas en las hojas
+            if(hasFactura){
+                xlsBuilder.llenarHojaFactura(workbook,facturaDTO,cliente);
+            }
+            xlsBuilder.llenarHojaAlbaran(workbook,facturaDTO,cliente);
+
+            // Escribir el contenido del archivo Excel en el flujo de salida
+            workbook.write(outputStream);
+        }
+
+        return outputStream;
+    }
+
+    public void generateFactura(Long id) {
+        fHeaderService.generateFactura(id,fDetalleService.getFacturaClientesDetalleByHeaderId(id));
     }
 
 }

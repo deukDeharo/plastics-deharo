@@ -1,5 +1,7 @@
 package com.facturacion.plasticsdeharo.entity;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -19,5 +21,5 @@ public class Articulo {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long codigo;
     private String concepto;
-    private Double precio;
+    private BigDecimal  precio;
 }
