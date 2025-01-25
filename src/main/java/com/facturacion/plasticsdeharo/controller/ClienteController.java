@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.facturacion.plasticsdeharo.entity.Cliente;
 import com.facturacion.plasticsdeharo.service.ClienteService;
@@ -22,9 +23,20 @@ public class ClienteController {
     ClienteService clienteService;
     
     @GetMapping("/clientes")
-    public String getClientes(Model model) {
-        model.addAttribute("clientes", clienteService.getAllClientes());
-        return "clientes";
+    public String getClientes(@RequestParam(required = false) String nombre, 
+                            @RequestParam(required = false) String localidad, 
+                            Model model) {
+        
+        if (nombre != null && !nombre.isBlank()) {
+            model.addAttribute("clientes", clienteService.getClientesByNombre(nombre));
+        } 
+        else if (localidad != null && !localidad.isBlank()) {
+            model.addAttribute("clientes", clienteService.getClientesByLocalidad(localidad));
+        } 
+        else{
+            model.addAttribute("clientes", clienteService.getAllClientes());
+        }
+        return "clientes"; // Regresa la vista 'clientes'
     }
 
     @GetMapping("/cliente")

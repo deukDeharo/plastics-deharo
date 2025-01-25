@@ -1,5 +1,7 @@
 package com.facturacion.plasticsdeharo.service;
 
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import java.time.format.DateTimeFormatter;
 import java.math.BigDecimal;
@@ -24,7 +26,12 @@ public class FacturaClientesHeaderService {
     private final ClienteService clienteService;
 
     public List<FacturaClientesHeader> getAllFacturaClientesHeader() {
-        return fHeaderRepository.findAll();
+        Sort sort = Sort.by(
+        Order.asc("isGenerated"), // Orden descendente por 'isGenerated'
+        Order.desc("date")        // Orden descendente por 'fecha'
+        );
+
+        return fHeaderRepository.findAll(sort);
     }
 
     public FacturaClientesHeader getFacturaClientesHeaderById(Long id) {
