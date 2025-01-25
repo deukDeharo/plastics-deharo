@@ -12,6 +12,8 @@ import com.facturacion.plasticsdeharo.entity.FacturaClientesHeader;
 import com.facturacion.plasticsdeharo.repository.FacturaClientesDetalleRepository;
 import lombok.AllArgsConstructor;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,7 +57,11 @@ public class FacturaClientesDetalleService {
             Articulo articulo = articuloService.getArticuloById(detalle.getCodigoArticulo());
             detalle.setConceptoArticulo(articulo.getConcepto());
             detalle.setPrecio(articulo.getPrecio());
-            detalle.setImporte(detalle.getPrecio()*detalle.getUnidad());
+            BigDecimal precio = detalle.getPrecio();
+            BigDecimal unidad = BigDecimal.valueOf(detalle.getUnidad());
+
+            BigDecimal importe = precio.multiply(unidad).setScale(2, RoundingMode.DOWN);
+            detalle.setImporte(importe);
             detallesFactura.add(detalle);
         }
         return detallesFactura;

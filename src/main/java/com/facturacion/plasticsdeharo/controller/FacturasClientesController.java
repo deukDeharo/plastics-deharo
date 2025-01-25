@@ -7,7 +7,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -84,12 +83,56 @@ public class FacturasClientesController {
     public ResponseEntity<byte[]> printFacturaXls(@PathVariable Long id) {
         try {
             // Generar el archivo Excel como flujo de bytes
-            ByteArrayOutputStream excelOutputStream = fClientesService.printFacturaXls(id);
+            ByteArrayOutputStream excelOutputStream = fClientesService.printFacturaXls(id,true);
 
             // Preparar los encabezados de la respuesta HTTP
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-            headers.setContentDispositionFormData("attachment", "template_copia.xlsx");
+            String fileName = "factura_"+ id +".xlsx";
+            headers.setContentDispositionFormData("attachment", fileName);
+
+            // Devolver el archivo como un arreglo de bytes
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(excelOutputStream.toByteArray());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(null);
+        }
+    }
+
+    @GetMapping("/facturaCliente/{id}/printAlbaran")
+    public ResponseEntity<byte[]> printAlbaranXls(@PathVariable Long id) {
+        try {
+            // Generar el archivo Excel como flujo de bytes
+            ByteArrayOutputStream excelOutputStream = fClientesService.printFacturaXls(id,false);
+
+            // Preparar los encabezados de la respuesta HTTP
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            String fileName = "albaran_"+ id +"_.xlsx";
+            headers.setContentDispositionFormData("attachment", fileName);
+
+            // Devolver el archivo como un arreglo de bytes
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(excelOutputStream.toByteArray());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(null);
+        }
+    }
+
+    @GetMapping("/facturaCliente/{id}/generate")
+    public ResponseEntity<byte[]> generateFacturaXls(@PathVariable Long id) {
+        try {
+            fClientesService.generateFactura(id);
+            // Generar el archivo Excel como flujo de bytes
+            ByteArrayOutputStream excelOutputStream = fClientesService.printFacturaXls(id,true);
+
+            // Preparar los encabezados de la respuesta HTTP
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            String fileName = "factura_"+ id +".xlsx";
+            headers.setContentDispositionFormData("attachment", fileName);
 
             // Devolver el archivo como un arreglo de bytes
             return ResponseEntity.ok()

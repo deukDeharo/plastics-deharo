@@ -2,9 +2,12 @@ package com.facturacion.plasticsdeharo.service;
 
 import org.springframework.stereotype.Service;
 import java.time.format.DateTimeFormatter;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import com.facturacion.plasticsdeharo.dto.HeaderFacturaDTO;
 import com.facturacion.plasticsdeharo.entity.Cliente;
+import com.facturacion.plasticsdeharo.entity.FacturaClientesDetalle;
 import com.facturacion.plasticsdeharo.entity.FacturaClientesHeader;
 import com.facturacion.plasticsdeharo.repository.FacturaClientesHeaderRepository;
 import lombok.AllArgsConstructor;
@@ -73,6 +76,42 @@ public class FacturaClientesHeaderService {
     public List<FacturaClientesHeader> getByCodigoCliente(Long codigoCliente) {
         return fHeaderRepository.findByCodigoCliente(codigoCliente);
     }
+
+    public Cliente getClienteById(Long id){
+            return clienteService.getClienteById(id);
+    }
+
+    public void generateFactura(Long id,List<FacturaClientesDetalle> detalles) {
+        FacturaClientesHeader header = getFacturaClientesHeaderById(id);
+        header.setIsGenerated(true);
+        calculateTotals(header,detalles);
+        updateFacturaClientesHeader(header);
+    }
+
+    private void calculateTotals(FacturaClientesHeader header,List<FacturaClientesDetalle> detalles) {
+        BigDecimal acumuladoTotal = BigDecimal.ZERO;
+        BigDecimal acumuladoTotalConIva = BigDecimal.ZERO;
+        BigDecimal ivaAcumuladoTotal = BigDecimal.ZERO;
+
+        for (FacturaClientesDetalle detalle : detalles) {
+            if (detalle.getImporte() != null) {
+                // Sumar el importe al total acumulado
+                acumuladoTotal = acumuladoTotal.add(detalle.getImporte());
+            }
+        }
+
+        // Calcular el total con IVA
+        acumuladoTotal = acumuladoTotal.setScale(2, RoundingMode.DOWN);
+        ivaAcumuladoTotal = ivaAcumuladoTotal.add(acumuladoTotal.multiply(BigDecimal.valueOf(header.getIva().floatValue()/100)));
+        acumuladoTotalConIva = acumuladoTotal.add(ivaAcumuladoTotal);
+
+        // Actualizar los campos
+        header.setTotal(acumuladoTotal.setScale(2, RoundingMode.DOWN));
+        header.setTotalConIva(acumuladoTotalConIva.setScale(2, RoundingMode.DOWN));
+        header.setImporteIva(ivaAcumuladoTotal.setScale(2, RoundingMode.DOWN));
+    }
+        
+            
 
 
 }

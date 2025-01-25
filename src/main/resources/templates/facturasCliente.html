@@ -9,7 +9,7 @@
 <body>
     <div th:insert="fragments :: navbar"></div>
     <div class="container">
-        <h1>Clientes</h1>
+        <h1>Facturas Cliente</h1>
         <form th:action="@{/facturasCliente}" method="get">
             <div class="input-group mb-3">
                 <input type="text" class="form-control" placeholder="Codigo factura" name="codigo" th:value="${codigoFactura}">
@@ -50,7 +50,7 @@
                         </button>
 
                         <!-- Botón de generar o imprimir -->
-                        <button class="btn btn-info" 
+                        <button class="btn btn-success" 
                             th:if="${!factura.isGenerated}" 
                             th:onclick="|window.location='/facturaCliente/' + ${factura.codigoFactura} + '/generate';|">
                             Generar
@@ -59,6 +59,11 @@
                             th:if="${factura.isGenerated}" 
                             th:onclick="|window.location='/facturaCliente/' + ${factura.codigoFactura} + '/print';|">
                             Imprimir
+                        </button>
+                        <button class="btn btn-info" 
+                            th:if="${!factura.isGenerated}" 
+                            th:onclick="|window.location='/facturaCliente/' + ${factura.codigoFactura} + '/printAlbaran';|">
+                            Albarán
                         </button>
                     </td>
                 </tr>

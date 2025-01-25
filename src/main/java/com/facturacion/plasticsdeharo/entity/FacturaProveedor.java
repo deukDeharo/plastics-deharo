@@ -23,4 +23,5 @@ public class FacturaProveedor {
     private Long codigoProveedor;
     private LocalDate fecha;
     private Double total;
+    private String proveedor;
 }

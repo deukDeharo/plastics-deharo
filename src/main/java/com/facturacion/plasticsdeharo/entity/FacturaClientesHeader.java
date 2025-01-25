@@ -1,5 +1,6 @@
 package com.facturacion.plasticsdeharo.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import javax.persistence.Entity;
@@ -28,8 +29,9 @@ public class FacturaClientesHeader {
     private String domicilioCliente;
     private String formaDePagoCliente;
     private String numeroDeCuentaCliente;
-    private Long total;
-    private Long totalConIva;
+    private BigDecimal  total;
+    private BigDecimal  totalConIva;
+    private BigDecimal  importeIva;
     private LocalDate dateVencimiento;
     private String banco;
     private Boolean isGenerated;
