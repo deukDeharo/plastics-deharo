@@ -60,7 +60,7 @@
                         <a th:href="@{/facturaCliente/{id}(id=${factura.codigoFactura})}" class="btn btn-warning">Editar</a>
 
                         <!-- Botón de eliminar (deshabilitado si está generado) -->
-                        <button th:disabled="${factura.isGenerated}" class="btn btn-danger" 
+                        <button class="btn btn-danger" 
                             th:onclick="|if (confirm('¿Estás seguro de que deseas eliminar?')) { window.location='/facturaCliente/' + ${factura.codigoFactura} + '/delete'; }|">
                             Eliminar
                         </button>

@@ -118,7 +118,7 @@ public class FacturasClienteXLS {
         if (row12 == null) row12 = sheet.createRow(11);
         Cell cellC12 = row12.getCell(2); 
         if (cellC12 == null) cellC12 = row12.createCell(2);
-        cellC12.setCellValue(cliente.getDomicilio());
+        cellC12.setCellValue(cliente.getDomicilio()+ " - " + cliente.getLocalidad());
     }
     
     private String formattedDate(LocalDate date){
@@ -142,7 +142,7 @@ public class FacturasClienteXLS {
             // Columna B (segunda columna, índice 1)
             Cell cellB = row.getCell(1);
             if (cellB == null) cellB = row.createCell(1);
-            cellB.setCellValue(formattedDate(detalle.getCreatedAt()));
+            cellB.setCellValue(detalle.getCodigoArticulo());
 
             // Columna C (tercera columna, índice 2)
             Cell cellC = row.getCell(2);

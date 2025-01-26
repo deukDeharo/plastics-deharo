@@ -58,7 +58,7 @@ public class FacturaProveedorController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/proveedor/{codigoProveedor}")
+    @GetMapping("/facturasproveedor/getByProveedor/{codigoProveedor}")
     public List<FacturaProveedor> getFacturasProveedorByProveedor(@PathVariable Long codigoProveedor) {
         return facturaProveedorService.getFacturasByProveedor(codigoProveedor);
     }
