@@ -40,4 +40,16 @@ public class ClienteService {
         clienteRepository.deleteById(id);
     }
 
+    public List<Cliente> getClientesByNombre(String nombre) {
+        return clienteRepository.findByNombreContainingIgnoreCase(nombre);
+    }
+    
+    public List<Cliente> getClientesByLocalidad(String localidad) {
+        return clienteRepository.findByLocalidadContainingIgnoreCase(localidad);
+    }
+    
+    public List<Cliente> getClientesByNombreYLocalidad(String nombre, String localidad) {
+        return clienteRepository.findByNombreAndLocalidad(nombre, localidad);
+    }
+
 }

@@ -20,6 +20,10 @@ public class ArticuloService {
         return articuloRepository.findAll();
     }
 
+    public List<Articulo> getArticulosByConcepto(String concepto) {
+        return articuloRepository.findByConceptoContainingIgnoreCase(concepto);
+    }
+
     public Articulo getArticuloById(Long id) {
         return articuloRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Articulo no encontrado"));
     }

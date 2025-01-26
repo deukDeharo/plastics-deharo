@@ -40,4 +40,8 @@ public class ProveedorService {
     public void deleteProveedor(Long id) {
         proveedorRepository.deleteById(id);
     }
+
+    public List<Proveedor> getProveedoresByNombre(String nombre) {
+        return proveedorRepository.findByNombreContainingIgnoreCase(nombre);
+    }
 }

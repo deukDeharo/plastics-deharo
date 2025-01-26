@@ -1,5 +1,7 @@
 package com.facturacion.plasticsdeharo.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -8,6 +10,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.facturacion.plasticsdeharo.entity.Proveedor;
 import com.facturacion.plasticsdeharo.service.ProveedorService;
@@ -21,8 +24,14 @@ public class ProveedorController {
     ProveedorService proveedorService;
     
     @GetMapping("/proveedores")
-    public String getProveedores(Model model) {
-        model.addAttribute("proveedores", proveedorService.getAllProveedores());
+    public String getProveedores(@RequestParam(value = "nombre", required = false) String nombre, Model model) {
+        List<Proveedor> proveedores;
+        if (nombre != null && !nombre.isEmpty()) {
+            proveedores = proveedorService.getProveedoresByNombre(nombre);
+        } else {
+            proveedores = proveedorService.getAllProveedores();
+        }
+        model.addAttribute("proveedores", proveedores);
         return "proveedores";
     }
 

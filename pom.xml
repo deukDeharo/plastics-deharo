@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.facturacion</groupId>
 	<artifactId>plasticsdeharo</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<name>plasticsdeharo</name>
 	<description>Modulo de Facturación para plastisc de haro sl</description>
 	<properties>

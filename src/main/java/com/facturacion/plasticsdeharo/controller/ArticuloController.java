@@ -1,5 +1,8 @@
 package com.facturacion.plasticsdeharo.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -8,6 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.facturacion.plasticsdeharo.entity.Articulo;
 import com.facturacion.plasticsdeharo.service.ArticuloService;
@@ -21,8 +25,14 @@ public class ArticuloController {
     ArticuloService articuloService;
     
     @GetMapping("/articulos")
-    public String getArticulos(Model model) {
-        model.addAttribute("articulos", articuloService.getAllArticulos());
+    public String getArticulos(@RequestParam(value = "concepto", required = false) String concepto, Model model) {
+        List<Articulo> articulos;
+        if (concepto != null && !concepto.isEmpty()) {
+            articulos = articuloService.getArticulosByConcepto(concepto);
+        } else {
+            articulos = articuloService.getAllArticulos();
+        }
+        model.addAttribute("articulos", articulos);
         return "articulos";
     }
 
