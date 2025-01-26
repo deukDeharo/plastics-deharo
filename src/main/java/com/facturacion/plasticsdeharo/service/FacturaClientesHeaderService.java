@@ -26,12 +26,17 @@ public class FacturaClientesHeaderService {
     private final ClienteService clienteService;
 
     public List<FacturaClientesHeader> getAllFacturaClientesHeader() {
+        Sort sort = getSort();
+
+        return fHeaderRepository.findAll(sort);
+    }
+
+    private Sort getSort() {
         Sort sort = Sort.by(
         Order.asc("isGenerated"), // Orden descendente por 'isGenerated'
         Order.desc("date")        // Orden descendente por 'fecha'
         );
-
-        return fHeaderRepository.findAll(sort);
+        return sort;
     }
 
     public FacturaClientesHeader getFacturaClientesHeaderById(Long id) {
@@ -116,6 +121,18 @@ public class FacturaClientesHeaderService {
         header.setTotal(acumuladoTotal.setScale(2, RoundingMode.DOWN));
         header.setTotalConIva(acumuladoTotalConIva.setScale(2, RoundingMode.DOWN));
         header.setImporteIva(ivaAcumuladoTotal.setScale(2, RoundingMode.DOWN));
+    }
+
+    public List<FacturaClientesHeader> getByIsGenerated(boolean isGenerated) {
+        return fHeaderRepository.findByIsGenerated(isGenerated,getSort());
+    }
+
+    public List<FacturaClientesHeader> getByDateRange(LocalDate fechaDesde, LocalDate fechaHasta) {
+        return fHeaderRepository.findByDateBetween(fechaDesde, fechaHasta,getSort());
+    }
+
+    public List<FacturaClientesHeader> getByDateRangeAndIsGenerated(LocalDate fechaDesde, LocalDate fechaHasta, boolean isGenerated) {
+        return fHeaderRepository.findByDateBetweenAndIsGenerated(fechaDesde, fechaHasta, isGenerated,getSort());
     }
         
             

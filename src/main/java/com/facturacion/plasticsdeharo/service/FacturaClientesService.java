@@ -3,6 +3,7 @@ package com.facturacion.plasticsdeharo.service;
 import java.util.List;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import javax.transaction.Transactional;
@@ -32,7 +33,13 @@ public class FacturaClientesService {
     private final FacturaClientesHeaderService fHeaderService;
     private final FacturasClienteXLS xlsBuilder;
 
-    public List<FacturaClientesHeader> filterFacturas(Long codigoFactura, Long codigoCliente) {
+   public List<FacturaClientesHeader> filterFacturas(
+            Long codigoFactura, 
+            Long codigoCliente, 
+            String estadoFactura, 
+            LocalDate fechaDesde, 
+            LocalDate fechaHasta) {
+        
         if (codigoFactura != null && codigoCliente != null) {
             return fHeaderService.getByCodigoFacturaAndCodigoCliente(codigoFactura, codigoCliente);
         } else if (codigoFactura != null) {
@@ -40,7 +47,20 @@ public class FacturaClientesService {
         } else if (codigoCliente != null) {
             return fHeaderService.getByCodigoCliente(codigoCliente);
         } else {
-            return fHeaderService.getAllFacturaClientesHeader();
+            // Nueva lógica para estadoFactura y fechas
+            if (estadoFactura != null && fechaDesde == null && fechaHasta == null) {
+                boolean isGenerated = "generadas".equalsIgnoreCase(estadoFactura);
+                return fHeaderService.getByIsGenerated(isGenerated);
+            } else if (fechaDesde != null && fechaHasta != null) {
+                if (estadoFactura != null) {
+                    boolean isGenerated = "generadas".equalsIgnoreCase(estadoFactura);
+                    return fHeaderService.getByDateRangeAndIsGenerated(fechaDesde, fechaHasta, isGenerated);
+                } else {
+                    return fHeaderService.getByDateRange(fechaDesde, fechaHasta);
+                }
+            } else {
+                return fHeaderService.getAllFacturaClientesHeader();
+            }
         }
     }
 

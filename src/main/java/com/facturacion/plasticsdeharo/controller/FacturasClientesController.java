@@ -1,6 +1,7 @@
 package com.facturacion.plasticsdeharo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,6 +20,7 @@ import com.facturacion.plasticsdeharo.entity.FacturaClientesHeader;
 import com.facturacion.plasticsdeharo.service.FacturaClientesService;
 
 import java.io.ByteArrayOutputStream;
+import java.time.LocalDate;
 import java.util.List;
 
 @Controller
@@ -27,14 +29,19 @@ public class FacturasClientesController {
     @Autowired
     FacturaClientesService fClientesService;
 
-    @GetMapping("/facturasCliente")
-    public String getFacturas(@RequestParam(required = false) Long codigo,
+   @GetMapping("/facturasCliente")
+    public String getFacturas(
+            @RequestParam(required = false) Long codigo,
             @RequestParam(required = false) Long cliente,
+            @RequestParam(required = false) String estadoFactura,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDesde,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaHasta,
             Model model) {
-        List<FacturaClientesHeader> facturas = fClientesService.filterFacturas(codigo, cliente);
+        List<FacturaClientesHeader> facturas = fClientesService.filterFacturas(codigo, cliente, estadoFactura, fechaDesde, fechaHasta);
         model.addAttribute("facturas", facturas);
         return "facturasCliente";
     }
+
 
     @GetMapping("/facturaCliente/{id}")
     public String getFactura(@PathVariable Long id, Model model) {
@@ -71,7 +78,7 @@ public class FacturasClientesController {
     public String deleteFacturaCliente(@PathVariable Long id, Model model) {
         boolean deleted = fClientesService.deleteFacturaCliente(id);
         if (deleted) {
-            List<FacturaClientesHeader> facturas = fClientesService.filterFacturas(null, null);
+            List<FacturaClientesHeader> facturas = fClientesService.filterFacturas(null, null, null, null, null);
             model.addAttribute("facturas", facturas);
             return "facturasCliente";
         } else {

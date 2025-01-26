@@ -13,7 +13,23 @@
         <form th:action="@{/facturasCliente}" method="get">
             <div class="input-group mb-3">
                 <input type="text" class="form-control" placeholder="Codigo factura" name="codigo" th:value="${codigoFactura}">
-                <input type="text" class="form-control" placeholder="Cliente" name="cliente" th:value="${clienteId}">
+                <input type="text" class="form-control" placeholder="Codigo Cliente" name="cliente" th:value="${clienteId}">
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="mostrarGeneradas" name="estadoFactura" value="generadas" th:checked="${estadoFactura == 'generadas'}">
+                <label class="form-check-label" for="mostrarGeneradas">Mostrar Generadas</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="mostrarNoGeneradas" name="estadoFactura" value="noGeneradas" th:checked="${estadoFactura == 'noGeneradas'}">
+                <label class="form-check-label" for="mostrarNoGeneradas">Mostrar No Generadas</label>
+            </div>
+            <div class="input-group mb-3">
+                <label class="input-group-text" for="fechaDesde">Desde</label>
+                <input type="date" class="form-control" id="fechaDesde" name="fechaDesde" th:value="${fechaDesde}">
+                <label class="input-group-text" for="fechaHasta">Hasta</label>
+                <input type="date" class="form-control" id="fechaHasta" name="fechaHasta" th:value="${fechaHasta}">
+            </div>
+            <div>
                 <button class="btn btn-primary" type="submit">Filtrar</button>
             </div>
         </form>
@@ -22,8 +38,8 @@
             <thead>
                 <tr>
                     <th scope="col">N.Factura</th>
-                    <th scope="col">C.Cliente</th>
-                    <th scope="col">N.Cliente</th>
+                    <th scope="col">Codigo Cliente</th>
+                    <th scope="col">Nombre Cliente</th>
                     <th scope="col">Fecha</th>
                     <th scope="col">Total</th>
                     <th scope="col">Generada</th>
